@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Document</title>
+</head>
+<body>
+   
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="http://127.0.0.1:5500/Home.html">Series</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="http://127.0.0.1:5500/Home.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5500/NuevoPersonaje.html">Nuevo Personaje</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="http://127.0.0.1:5500/ModificarPersonaje.html">Modificar Personaje</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Series
+                </a>
+                <ul class="dropdown-menu" id='series' aria-labelledby="navbarDropdown">
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <div id="series_lista">
+
+      </div>
+    
+
+
+
+    <script src="library/jquery-3.7.1.min.js"></script>
+    <script src="library/bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+        var urlSeries ="https://apiseriespersonajes.azurewebsites.net/";
+        $(document).ready(function(){
+            loadSeries();
+            loadSerie();
+        })
+        function loadSeries(){
+            var request='api/series';
+           
+            $.getJSON(urlSeries + request,function(data){
+                $.each(data, function(index, serie){
+                    var html='';
+
+                    html+='<li><a class="dropdown-item" href="http://127.0.0.1:5500/Series.html?idseries='+serie.idSerie+'">'+ serie.nombre+'</a></li>';
+                    $("#series").append(html); 
+
+                })
+            })
+
+        }
+
+        function loadSerie(){
+            var params = new window.URLSearchParams(window.location.search); 
+
+            var serie = params.get('idseries');
+
+            var request='api/series/'+ serie;
+            
+            $.getJSON(urlSeries + request,function(data){
+                
+                    var html_series="";
+
+                    html_series+="<div class='position-absolute top-50 start-50 translate-middle text-center'><img src='"+data.imagen+"' style='width:300px','height:300px'/><br/><h3>"+data.nombre+"</h3><p>IMBD: "+data.puntuacion+"</p><a class='btn btn-success' href='http://127.0.0.1:5500/Personajes.html?idseries="+data.idSerie+"'>Personajes</a></div>";
+                    $("#series_lista").append(html_series);
+                    
+
+                
+            })
+        }
+
+
+
+
+    </script>
+    
+</body>
+</html>

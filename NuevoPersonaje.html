@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <title>Document</title>
+</head>
+<body>
+   
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="http://127.0.0.1:5500/Home.html">Series</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="http://127.0.0.1:5500/Home.html">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="http://127.0.0.1:5500/NuevoPersonaje.html">Nuevo Personaje</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="http://127.0.0.1:5500/ModificarPersonaje.html">Modificar Personaje</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Series
+                </a>
+                <ul class="dropdown-menu" id='series' aria-labelledby="navbarDropdown">
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      <h1>Nuevo Personaje</h1>
+      <div class="position-absolute top-50 start-50 translate-middle">
+       
+        <label>Nombre: </label><br/>
+        <input type="text" id="nombre"/><br/>
+        <label>Imagen: </label><br/>
+        <input type="text" id="imagen"/><br/>
+        <label>Serie: </label><br/>
+        <select id="series_select">
+
+        </select><br/>
+        <button class="btn btn-info" id="new_perosnaje">Nuevo Personaje</button>
+
+    
+
+
+      </div>
+    
+
+
+
+    <script src="library/jquery-3.7.1.min.js"></script>
+    <script src="library/bootstrap/js/bootstrap.bundle.js"></script>
+    <script>
+        var urlSeries ="https://apiseriespersonajes.azurewebsites.net/";
+        $(document).ready(function(){
+            loadSeries();
+        })
+        function loadSeries(){
+            var request='api/series';
+           
+            $.getJSON(urlSeries + request,function(data){
+                $.each(data, function(index, serie){
+                    var html='';
+                    var html_select="";
+
+                    html+='<li><a class="dropdown-item" href="http://127.0.0.1:5500/Series.html?idseries='+serie.idSerie+'">'+ serie.nombre+'</a></li>';
+                    html_select+="<option value='"+serie.idSerie+"'>"+serie.nombre+"</option>";
+                    $("#series").append(html); 
+                    $("#series_select").append(html_select);
+                })
+            })
+
+        }
+
+        $("#new_perosnaje").click(function(){
+
+            var request='api/personajes';
+
+
+            var nombre=$("#nombre").val();
+            var imagen=$("#imagen").val();
+            var idserie=parseInt($("#series_select option:selected").val());
+            // var idserie=$("#series_select option:selected").val();
+
+
+            var dataJson= getJsonPersonaje(nombre,imagen,idserie);
+
+            console.log(dataJson);
+
+            $.ajax({
+                url: urlSeries+request,
+                type: "POST",
+                data: dataJson,
+                contentType: "application/json",
+                success: function(data) {
+                    
+                    console.log('introducido correctamente');
+                    $(location).attr('href','http://127.0.0.1:5500/Personajes.html?idseries='+idserie);
+                }
+            });
+
+
+
+            })
+
+
+        function getJsonPersonaje(nombre,imagen,idserie){
+            var personaje= new Object();
+            personaje.idPersonaje=0;
+            personaje.nombre=nombre;
+            personaje.imagen=imagen;
+            personaje.idSerie=idserie;
+
+            var dataJson= JSON.stringify(personaje);
+
+            return dataJson;
+
+        }
+
+
+
+
+
+    </script>
+    
+</body>
+</html>
